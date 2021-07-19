@@ -1,0 +1,240 @@
+{smcl}
+{* 24oct2008}{...}
+{hline}
+help for {hi:dna}
+{hline}
+
+{title:Genetic Algorithm}
+
+{p 8}{cmd:dna {ul:f}unction} {it:function_name}
+
+{p 8}{cmd:dna {ul:l}ength} {it:#}
+
+{p 8}{cmd:dna {ul:p}opulation} {it:#}
+
+{p 8}{cmd:dna {ul:o}ffspring} {it:#}
+
+{p 8}{cmd:dna {ul:sel}ection} {it:#}
+
+{p 8}{cmd:dna {ul:m}utation} {it:#} [{it:#}]
+
+{p 8}{cmd:dna {ul:r}adiation} {it:#} [{it:#}]
+
+{p 8}{cmd:dna {ul:de}fine} {it:#} {it:#} {it:#}
+
+{p 8}{cmd:dna {ul:gr}oup} {it:#} {it:#}
+
+{p 8}{cmd:dna {ul:ge}nerations} {it:#}
+
+{p 8}{cmd:dna {ul:st}agnation} {it:#}
+
+{p 8}{cmd:dna {ul:a}uto}
+
+{p 8}{cmd:dna {ul:ma}nual}
+
+{p 8}{cmd:dna {ul:i}nfo}
+
+{p 8}{cmd:dna {ul:di}splay}
+
+{p 8}{cmd:dna {ul:e}xport}
+
+{p 8}{cmd:dna {ul:c}lear}
+
+{p 8}{cmd:dna {ul:go}}
+
+{title:Description}
+
+{p}{cmd:dna} executes a genetic algorithm based optimization. The
+population of potential solutions resides in the matrix {hi:pop}.
+The row vector {hi:dna} contains the active solution. This vector is the interface to
+the fitness function. Each column corresponds to a parameter of the function. 
+The fitness is saved in an additional column on the rightmost position of
+both matrixes.{break}
+The parametrization of the genetic algorithm is achieved over multiple calls of the 
+command {cmd:{ul:dna}} followed by an option and its parameters separated by blanks.
+All settings are saved in global macros starting with the letters {hi:DNA}.
+If a macro does not exist it will be generated with a default setting.
+
+{title:Options}
+
+{p 0 4}{cmd:{ul:f}unction} {it:function_name} specifies the fitness function.
+A potential solution is copied into the row vector {hi:dna} to be evaluated by this function.
+Each element of the row vector {hi:dna} represents a parameter of the function.
+They can be addressed by using the following syntax: {cmd:dna[}1{cmd:,}{it:#}{cmd:]}, where {hi:#} is the number
+of the parameter. The fitness is returned in the last element of the {hi:dna} vector.
+The global macro {hi:DNAFIT} contains the column index of this element.
+The iteration process can be manually stopped if something is put into the global
+macro {hi:DNASTOP}. The generation number is saved in the global macro {hi:DNAITER}.
+The actual mutation parameters are saved in the macros {hi:DNAMUTX} and {hi:DNARADX}
+(see options {hi:manual} and {hi:auto}).
+The name of the function is saved in the global macro {hi:DNAFUN}.
+
+{p 0 4}{cmd:{ul:l}ength} {it:#} defines the number of parameters used
+in the fitness function. The length is saved in the global macro {hi:DNALEN} (range: [1,...]).
+A row in the population matrix {hi:pop} has {hi:DNALEN}+1 rows because of the additional
+column for the fitness.
+
+{p 0 4}{cmd:{ul:p}opulation} {it:#} defines the size of the population.
+The population size is saved in the global macro {hi:DNAPOP} (range: [2,...], default: 100).
+The population matrix {hi:pop} has {hi:DNAPOP} rows and {hi:DNALEN}+1 columns.
+
+{p 0 4}{cmd:{ul:o}ffspring} {it:#} defines the number of offspring vectors to
+be created during each iteration. An intermediate population consists of
+all the parent vectors in {hi:pop} and the offspring vectors. Only the best {hi:DNAPOP}
+candidates as evaluated by the fitness function of this intermediate population
+remain in the base population {hi:pop} as the next generation.
+The offspring number is saved in the global macro {hi:DNAOFF} (range: [1,...], default: DNAPOP).
+
+{p 0 4}{cmd:{ul:sel}ection} {it:#} defines the influence of the fitness on the
+selection probabilty of a parent vector. If the selection value is zero the choice of partner
+is a complete random process. The importance of the fitness as a weight of the selection
+probabilty increases with the selection value. The selection value is
+saved in the global macro {hi:DNASEL} (range: [0,1], default: 1.0).
+
+{p 0 4}{cmd:{ul:m}utation} {it:#} [{it:#}] specifies the probability of a mutation for
+any element of an offsping vector. The offspring can have multiple mutations. The second
+parameter defines the half-life of the mutation in generations (this value can be negative for
+growing mutation rates). The mutation and its half-life are saved in the global macros {hi:DNAMUT}
+(range: [0,1], default: 0.25) and {hi:DNAMHL} (default: 0, resulting in a contant mutation rate).
+
+{p 0 4}{cmd:{ul:r}adiation} {it:#} [{it:#}] specifies the effect of a mutation. The value
+of an offspring element will be shifted by a random factor which ranges from the negative radiation number to the
+positive radiation number. The second parameter defines the half-life of the radiation in generations
+(this value can be negative for growing radiation levels).
+The radiation and its half-life are saved in the global macros {hi:DNARAD} (default: 4) and {hi:DNARHL} (default: 0).
+
+{p 0 4}{cmd:{ul:a}uto} sets the mutation mode to {hi:auto}. The program executes the
+mutation according to its parameters. The mode is saved in the global macro {hi:DNAMOD} (default: auto).
+
+{p 0 4}{cmd:{ul:ma}nual} sets the mutation mode to {hi:manual}. The program assumes that
+the fitness function executes the mutation. The algorithm changes the actual
+values of the mutation ({hi:DNAMUTX}) and radiation ({hi:DNARADX}) as normal
+without entering the automatic mutation procedure.
+With this option it is possible to implement specific mutation methods.
+The mode is saved in the global macro {hi:DNAMOD} (default: auto).
+
+{p 0 4}{cmd:{ul:de}fine} {it:#} {it:#} {it:#} defines the initialization
+range of the parameters. The first number is the parameter number. The
+second and third number specifies the low and the high value of the
+parameter. The low ranges are saved in the global macros {hi:DNAL}#
+(default: -1) and the high ranges are saved in the global macros
+{hi:DNAH}# (default: 1).
+
+{p 0 4}{cmd:{ul:gr}oup} {it:#} {it:#} defines groups of parameters. The
+first number is the parameter number. The second number specifies a
+group. A group must be a positive integer number. The group number 0
+declares free parameters (default). During the crossover and mutation process the
+corresponding elements of grouped parameters will be regarded as one
+element. Random weights, multiplier and decisions will be the same for
+all elements of a group.
+The group numbers are saved in the global macros {hi:DNAG}# (default: 0).
+
+{p 0 4}{cmd:{ul:ge}nerations} {it:#} defines the maximum number of generations.
+A generation limit of 0 deactivates this method to stop the algotithm.
+The generation limit is saved in the global macro {hi:DNAGEN} (range: [0,...], default: 50).
+
+{p 0 4}{cmd:{ul:s}tagnation} {it:#} defines the maximum number of subsequent stagnations in the
+population. A stagnant population consists completely of vectors from the previous generation.
+This happens when no offspring survives the intermediate phase between generations, because the parent generation
+is dominating the fitness charts. The genetic algorithm stops if this number is reached.
+A stagnation limit of 0 deactivates this method to stop the algotithm.
+The stagnation limit is saved in the global macro {hi:DNASTA} (range: [0,...], default: 10).
+
+{p 0 4}{cmd:{ul:di}splay} sets the display mode to a viewable format.
+The display mode is saved in the global macro {hi:DNADIS} (default: display).
+
+{p 0 4}{cmd:{ul:e}xport} sets the display mode to an exportable, comma-separated format.
+The display mode is saved in the global macro {hi:DNADIS} (default: display).
+
+{p 0 4}{cmd:{ul:i}nfo} lists all parameters of the genetic algorithm.
+
+{p 0 4}{cmd:{ul:c}lear} clears all {cmd:dna} related global macros.
+
+{p 0 4}{cmd:{ul:go}} starts the genetic algorithm.
+
+{title:Example 1: Least Squares Method}
+
+The fitness function:{inp}
+
+    cap program drop lsm
+    program define lsm
+        tempvar xb d
+        qui gen `xb' = x1*dna[1,1] + x2*dna[1,2] + x3*dna[1,3] + x4*dna[1,4] + dna[1,5]
+        qui egen `d' = sum((y - `xb')^2)
+        matrix dna[1,$DNAFIT] = -`d'[1]
+    end
+
+{text}The parametrization of the genetic algorithm:{inp}
+
+    dna clear
+    dna fun lsm
+    dna len 5
+    dna pop 50
+    dna off 100
+    dna mut 1 20
+    dna rad 4 20
+    dna gen 200
+    dna sta 20
+    forvalue i = 1/5 {
+        dna `i' -10 10
+    }
+    dna go
+{text}
+
+{title:Example 2: Censored Least Absolute Deviation (CLAD)}
+
+First we create simulated data using a skewed error term {hi:e}.
+Variable {hi:y} is censored to the left.{inp}
+
+    set obs 1000
+    gen x1 = invnorm(uniform())
+    gen x2 = uniform()
+    gen e = exp(invnorm(uniform()))
+    sum e, d
+    replace e = e - r(p50)
+    gen y = x1 + x2 + 1 + e
+    replace y = 0 if y < 0
+
+{text}The fitness function:{inp}
+
+    cap program drop clad
+    program define clad
+        tempvar score xb
+        qui gen double `xb' = x1*dna[1,1] + x2*dna[1,2] + dna[1,3]
+        qui egen double `score' = sum(abs(y - max(`xb',0)))
+        qui matrix dna[1,$DNAFIT] = _N/`score'[1]
+    end
+
+{text}The parametrization of the genetic algorithm:
+{inp}
+    dna clear
+    dna fun clad
+    dna len 3
+    dna pop 50
+    dna off 100
+    dna mut 1 40
+    dna rad 1 40
+    dna gen 200
+    dna sta 20
+    dna 1 -2 2
+    dna 2 -2 2
+    dna 3 -2 2
+    dna go
+{text}
+
+{title:Author}
+
+{p 4 4}Thorsten Doherr{break}
+Centre for European Economic Research{break}
+L7,1{break}
+68161 Mannheim{break}
+Germany{break}
+Phone: +49 621 1235 291{break}
+Fax: +49 621 1235 170{break}
+E-Mail: doherr@zew.de{break}
+Internet: www.zew.de
+
+{title:Reference}
+
+{p 4 4}Dirk Czarnitzki and Thorsten Doherr (2002/2008), Genetic algorithms: A tool for optimization
+in econometrics - Basic concept and an example for empirical applications, ZEW Discussion Paper 02-41, Mannheim.
